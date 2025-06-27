@@ -7,15 +7,19 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="hero">
-    <div class="overlay">
-      <h1>AI Upscaler</h1>
-      <p>Enhance your images with cutting-edge AI. Fast. Secure. Stunning results.</p>
-      <form id="uploadForm">
-        <input type="file" id="imageInput" accept="image/*" required />
-        <button type="submit">Upscale Image</button>
-      </form>
-      <div id="result"></div>
+  <div class="container">
+    <h1 class="title">AI Upscaler</h1>
+
+    <label for="image-upload" class="upload-box">
+      <input type="file" id="image-upload" accept="image/*" hidden />
+      <span>↑</span>
+    </label>
+
+    <button id="upscale-btn">Upscale Image</button>
+
+    <div class="result-box">
+      <p id="status-text">Upscaled result will appear here</p>
+      <img id="output-img" src="" alt="" />
     </div>
   </div>
 
