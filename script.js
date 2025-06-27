@@ -1,38 +1,35 @@
-const WORKER_URL = "tree1.sahajsharma921.workers.dev"; // Replace with your actual worker URL if different
+const uploadInput = document.getElementById('image-upload');
+const upscaleBtn = document.getElementById('upscale-btn');
+const statusText = document.getElementById('status-text');
+const outputImg = document.getElementById('output-img');
 
-document.getElementById("upload-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
+const WORKER_URL = "https://your-worker-name.workers.dev"; // Replace this
 
-  const fileInput = document.getElementById("image");
-  const file = fileInput.files[0];
+upscaleBtn.addEventListener('click', async () => {
+  const file = uploadInput.files[0];
+  if (!file) return alert('Please upload an image.');
 
-  if (!file) {
-    alert("Please select an image.");
-    return;
-  }
+  statusText.textContent = 'Processing...';
+  outputImg.style.display = 'none';
 
   const formData = new FormData();
-  formData.append("image", file);
+  formData.append('image', file);
 
   try {
     const response = await fetch(WORKER_URL, {
-      method: "POST",
-      body: formData,
+      method: 'POST',
+      body: formData
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Server error: ${response.status}\n${errorText}`);
-    }
+    if (!response.ok) throw new Error('Upscaling failed');
 
     const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-
-    const resultImage = document.getElementById("result-image");
-    resultImage.src = url;
-    resultImage.style.display = "block";
-
-  } catch (error) {
-    alert("Upscale failed: " + error.message);
+    const imageUrl = URL.createObjectURL(blob);
+    outputImg.src = imageUrl;
+    outputImg.style.display = 'block';
+    statusText.textContent = 'Upscaled Result:';
+  } catch (err) {
+    console.error(err);
+    statusText.textContent = 'Error: ' + err.message;
   }
 });
