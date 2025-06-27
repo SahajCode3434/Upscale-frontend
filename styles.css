@@ -1,67 +1,62 @@
-body, html {
+body {
   margin: 0;
-  padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: black;
-  color: white;
-  height: 100%;
-  overflow-x: hidden;
-}
-
-.hero {
+  background-color: #0e0e0e;
+  color: #fff;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
   text-align: center;
-  height: 100vh;
-  background-image: url('your-background.jpg');
-  background-size: cover;
-  background-position: center;
-  position: relative;
+  max-width: 90%;
 }
 
-.overlay {
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 30px;
-  border-radius: 10px;
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
 }
 
-h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-}
-
-p {
-  font-size: 1.1em;
-  margin-bottom: 25px;
-}
-
-input[type="file"] {
-  background-color: #222;
-  color: white;
-  border: 1px solid #555;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-}
-
-button {
-  background-color: #ff4655;
-  color: white;
-  font-size: 1.2em;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
+.upload-box {
+  width: 150px;
+  height: 150px;
+  border: 3px solid #555;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+  font-size: 4rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+.upload-box:hover {
+  border-color: #f75454;
+  color: #f75454;
 }
 
-button:hover {
-  background-color: #e43c4a;
+#upscale-btn {
+  background-color: #f75454;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+#upscale-btn:hover {
+  background-color: #ff6666;
 }
 
-#result img {
+.result-box {
   margin-top: 20px;
+}
+#output-img {
   max-width: 100%;
+  display: none;
+  margin-top: 10px;
   border-radius: 10px;
 }
