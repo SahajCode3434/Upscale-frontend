@@ -3,7 +3,7 @@ const upscaleBtn = document.getElementById('upscale-btn');
 const statusText = document.getElementById('status-text');
 const outputImg = document.getElementById('output-img');
 
-const WORKER_URL = "https://your-worker-name.workers.dev"; // Replace this
+const WORKER_URL = "tree1.sahajsharma921.workers.dev"; // Replace this
 
 upscaleBtn.addEventListener('click', async () => {
   const file = uploadInput.files[0];
