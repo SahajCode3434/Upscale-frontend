@@ -32,18 +32,18 @@ submitBtn.addEventListener("click", async () => {
   try {
     const response = await fetch("https://tree1.sahajsharma921.workers.dev", {
       method: "POST",
-      body: formData,
+      body: formData
     });
 
     if (!response.ok) {
-      throw new Error("Worker responded with " + response.status);
+      throw new Error("Worker responded with status " + response.status);
     }
 
     const blob = await response.blob();
     resultImage.src = URL.createObjectURL(blob);
   } catch (error) {
-    alert("Failed to upscale image.");
-    console.error("Upscaling error:", error);
+    alert("Upscaling failed: " + error.message);
+    console.error(error);
   }
 
   submitBtn.disabled = false;
