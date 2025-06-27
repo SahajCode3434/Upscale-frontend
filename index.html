@@ -3,24 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Image Upscaler</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Image Upscaler</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1 class="title">AI Upscaler</h1>
+    <h1>Upscale Your Image</h1>
+    <p>Upload an image and get a 4x enhanced version using AI.</p>
 
-    <label for="image-upload" class="upload-box">
-      <input type="file" id="image-upload" accept="image/*" hidden />
-      <span>↑</span>
-    </label>
+    <input type="file" id="image" accept="image/*" />
+    <img id="preview" style="display: none;" />
 
-    <button id="upscale-btn">Upscale Image</button>
+    <button id="uploadBtn">Upscale</button>
 
-    <div class="result-box">
-      <p id="status-text">Upscaled result will appear here</p>
-      <img id="output-img" src="" alt="" />
-    </div>
+    <div id="result"></div>
   </div>
 
   <script src="script.js"></script>
