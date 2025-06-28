@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DragonScale - AI Upscaler</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DragonScale - AI Image Upscaler</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Inter&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rajdhani:wght@700&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -19,25 +18,44 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    .slider-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: #f87171;
+      z-index: 20;
+      cursor: ew-resize;
+    }
+    .preview-container {
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      object-fit: contain;
+    }
   </style>
 </head>
-<body class="min-h-screen text-white flex flex-col items-center px-4 py-8">
+<body class="flex flex-col items-center min-h-screen px-4 py-6 text-white">
   <h1 class="text-4xl text-orange-500 mb-2">DragonScale</h1>
-  <h2 class="text-lg text-gray-400 mb-6">Burn the Noise. Upscale with Precision.</h2>
-
-  <div class="w-full max-w-xl bg-gray-900 p-6 rounded-xl shadow-lg">
-    <input id="imageUpload" type="file" accept="image/*" class="mb-4 w-full bg-gray-800 p-2 rounded"/>
-    <button id="submitBtn" class="w-full bg-red-500 hover:bg-red-600 transition font-bold py-2 px-4 rounded">Upscale Image</button>
-
-    <div class="relative mt-6 w-full aspect-video bg-black flex justify-center items-center">
-      <div id="loading" class="hidden absolute animate-spin rounded-full h-12 w-12 border-t-4 border-red-500 border-opacity-50 z-10"></div>
-      <img id="previewImage" class="absolute left-0 top-0 h-full object-contain z-0" />
-      <img id="resultImage" class="absolute left-0 top-0 h-full object-contain z-10" />
-    </div>
+  <h2 class="text-xl text-gray-300 mb-8">Burn the Noise. Upscale with Precision.</h2>  <div class="w-full max-w-2xl p-4 rounded-xl bg-gray-900 border-2 border-dashed border-red-500">
+    <input id="imageUpload" type="file" accept="image/*" class="block w-full mb-4 text-white" />
+    <button id="submitBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full transition">Upscale Image</button><div class="preview-container w-full aspect-video mt-6 bg-black">
+  <div id="loading" class="hidden absolute z-30 inset-0 flex justify-center items-center bg-black bg-opacity-70">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-orange-500"></div>
   </div>
+  <img id="previewImage" class="z-10" style="clip-path: none;" />
+  <img id="resultImage" class="z-20" style="clip-path: inset(0 50% 0 0);" />
+  <div id="sliderBar" class="slider-bar" style="left: 50%;"></div>
+</div>
 
-  <footer class="text-sm text-gray-500 mt-8">All rights reserved © DragonScale 2025</footer>
+<button id="downloadBtn" class="mt-4 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded hidden w-full">Download Upscaled Image</button>
 
+  </div>  <footer class="text-sm text-gray-500 mt-8">All rights reserved © DragonScale 2025</footer>
   <script src="script.js"></script>
 </body>
 </html>
