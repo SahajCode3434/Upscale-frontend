@@ -2,14 +2,14 @@ const imageUpload = document.getElementById("imageUpload");
 const previewImage = document.getElementById("previewImage");
 const resultImage = document.getElementById("resultImage");
 const sliderHandle = document.getElementById("sliderHandle");
-const sliderOverlay = document.getElementById("sliderOverlay");
+const sliderWrapper = document.getElementById("sliderWrapper");
 const submitBtn = document.getElementById("submitBtn");
 const loader = document.getElementById("loading");
 const downloadBtn = document.getElementById("downloadBtn");
 
 let uploadedImage = null;
 
-// Image Preview
+// Upload Preview
 imageUpload.addEventListener("change", () => {
   const file = imageUpload.files[0];
   if (file) {
@@ -17,14 +17,14 @@ imageUpload.addEventListener("change", () => {
     const reader = new FileReader();
     reader.onload = () => {
       previewImage.src = reader.result;
-      resultImage.src = ""; // Reset result
-      downloadBtn.classList.add("hidden");
+      resultImage.src = ""; // Clear old result
+      sliderWrapper.classList.add("opacity-0");
     };
     reader.readAsDataURL(file);
   }
 });
 
-// Submit and Upscale
+// Submit to backend
 submitBtn.addEventListener("click", async () => {
   if (!uploadedImage) {
     alert("Please upload an image first.");
@@ -32,8 +32,8 @@ submitBtn.addEventListener("click", async () => {
   }
 
   submitBtn.disabled = true;
+  submitBtn.textContent = "Upscaling...";
   loader.classList.remove("hidden");
-  resultImage.src = "";
 
   const formData = new FormData();
   formData.append("image", uploadedImage);
@@ -44,43 +44,51 @@ submitBtn.addEventListener("click", async () => {
       body: formData,
     });
 
-    if (!response.ok) throw new Error("Upscale failed");
-
     const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    resultImage.src = objectUrl;
-    resultImage.onload = () => {
-      downloadBtn.href = objectUrl;
-      downloadBtn.classList.remove("hidden");
+    const resultURL = URL.createObjectURL(blob);
+    resultImage.src = resultURL;
 
-      // Animate slider back and forth
-      sliderOverlay.style.transition = "left 1.5s ease-in-out";
-      sliderOverlay.style.left = "0%";
-      setTimeout(() => {
-        sliderOverlay.style.left = "100%";
-        setTimeout(() => {
-          sliderOverlay.style.left = "50%";
-        }, 1500);
-      }, 1500);
+    resultImage.onload = () => {
+      sliderWrapper.classList.remove("opacity-0");
+      downloadBtn.href = resultURL;
+      downloadBtn.download = "upscaled.png";
+
+      // Trigger slider animation: left to right and center
+      let pos = 0;
+      const animation = setInterval(() => {
+        pos += 1;
+        updateSlider(pos);
+        if (pos >= 100) {
+          clearInterval(animation);
+          setTimeout(() => updateSlider(50), 500);
+        }
+      }, 8);
     };
   } catch (err) {
+    alert("Upscale failed. Try again later.");
     console.error(err);
-    alert("Upscaling failed. Try again.");
   } finally {
-    loader.classList.add("hidden");
     submitBtn.disabled = false;
+    submitBtn.textContent = "Upscale Image";
+    loader.classList.add("hidden");
   }
 });
 
-// Drag to adjust slider
+// Update slider position
+function updateSlider(percent) {
+  const clipWidth = `${percent}%`;
+  resultImage.style.clipPath = `inset(0 0 0 ${clipWidth})`;
+  sliderHandle.style.left = clipWidth;
+}
+
+// Drag to slide
 let isDragging = false;
 sliderHandle.addEventListener("mousedown", () => (isDragging = true));
 window.addEventListener("mouseup", () => (isDragging = false));
 window.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
-  const box = document.querySelector(".slider-box");
-  const rect = box.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
-  sliderOverlay.style.left = `${percent}%`;
+  const rect = sliderWrapper.getBoundingClientRect();
+  let x = ((e.clientX - rect.left) / rect.width) * 100;
+  x = Math.max(0, Math.min(100, x));
+  updateSlider(x);
 });
