@@ -1,17 +1,19 @@
-const imageInput = document.getElementById('imageUpload');
-const beforePreview = document.getElementById('previewImage');
-const afterPreview = document.getElementById('resultImage');
-const upscaleBtn = document.getElementById('submitBtn');
+const imageUpload = document.getElementById("imageUpload");
+const previewImage = document.getElementById("previewImage");
+const resultImage = document.getElementById("resultImage");
+const upscaleBtn = document.getElementById("upscaleBtn");
+const loader = document.getElementById("loader");
 
 let uploadedFile = null;
 
-imageInput.addEventListener("change", () => {
-  const file = imageInput.files[0];
+imageUpload.addEventListener("change", () => {
+  const file = imageUpload.files[0];
   if (file) {
     uploadedFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      beforePreview.src = reader.result;
+      previewImage.src = reader.result;
+      resultImage.src = "";
     };
     reader.readAsDataURL(file);
   }
@@ -19,12 +21,12 @@ imageInput.addEventListener("change", () => {
 
 upscaleBtn.addEventListener("click", async () => {
   if (!uploadedFile) {
-    alert("Please upload an image.");
+    alert("Please select an image first.");
     return;
   }
 
   upscaleBtn.disabled = true;
-  upscaleBtn.textContent = "Upscaling...";
+  loader.classList.remove("hidden");
 
   const formData = new FormData();
   formData.append("image", uploadedFile);
@@ -32,18 +34,20 @@ upscaleBtn.addEventListener("click", async () => {
   try {
     const response = await fetch("https://tree1.sahajsharma921.workers.dev", {
       method: "POST",
-      body: formData
+      body: formData,
     });
 
-    if (!response.ok) throw new Error("Upscale failed");
+    if (!response.ok) {
+      throw new Error("Failed to upscale image.");
+    }
 
     const blob = await response.blob();
-    afterPreview.src = URL.createObjectURL(blob);
-  } catch (err) {
-    alert("Error during upscaling.");
-    console.error(err);
+    resultImage.src = URL.createObjectURL(blob);
+  } catch (error) {
+    alert("Error upscaling image. Please try again.");
+    console.error(error);
   } finally {
     upscaleBtn.disabled = false;
-    upscaleBtn.textContent = "Upscale Image";
+    loader.classList.add("hidden");
   }
 });
