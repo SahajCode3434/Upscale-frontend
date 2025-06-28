@@ -1,98 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DragonScale - Image Upscaler</title>
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DragonScale - AI Image Upscaler</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Inter&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f0f0f;
+      animation: fadeIn 1s ease-in;
+    }
+    h1, h2 {
+      font-family: 'Rajdhani', sans-serif;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .dotted-box {
+      border: 2px dashed rgba(255, 100, 100, 0.4);
+      animation: pulseBorder 4s infinite;
+    }
+    @keyframes pulseBorder {
+      0%, 100% { border-color: rgba(255, 100, 100, 0.4); }
+      50% { border-color: rgba(255, 100, 100, 0.8); }
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.3);
+      width: 50%;
+      z-index: 10;
+      animation: slidePreview 3s ease-in-out infinite;
+    }
+    @keyframes slidePreview {
+      0%, 100% { left: 0; }
+      50% { left: 50%; }
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center min-h-screen px-4 py-6 text-white">
+  <h1 class="text-4xl text-orange-500 mb-2">DragonScale</h1>
+  <h2 class="text-xl text-gray-300 mb-8">Burn the Noise. Upscale with Precision.</h2>  <div class="w-full max-w-xl p-4 dotted-box rounded-xl bg-gray-900">
+    <input id="imageUpload" type="file" accept="image/*" class="block w-full text-white mb-4" />
+    <button id="submitBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 w-full">Upscale Image</button><div class="relative mt-6 w-full aspect-video bg-black flex justify-center items-center">
+  <div id="loading" class="hidden absolute z-20 animate-spin rounded-full h-12 w-12 border-t-4 border-red-500 border-opacity-50"></div>
+  <div class="slider w-full h-full relative overflow-hidden">
+    <img id="previewImage" class="absolute left-0 top-0 h-full object-contain z-0" />
+    <img id="resultImage" class="absolute left-0 top-0 h-full object-contain z-10" style="clip-path: inset(0 50% 0 0);" />
+  </div>
+</div>
 
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  </div>  <footer class="text-sm text-gray-500 mt-8">All rights reserved © DragonScale 2025</footer>  <script>
+    const imageUpload = document.getElementById("imageUpload");
+    const previewImage = document.getElementById("previewImage");
+    const resultImage = document.getElementById("resultImage");
+    const submitBtn = document.getElementById("submitBtn");
+    const loader = document.getElementById("loading");
+    let uploadedImage = null;
 
-    <!-- Orbitron Font from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet" />
+    imageUpload.addEventListener("change", () => {
+      const file = imageUpload.files[0];
+      if (file) {
+        uploadedImage = file;
+        const reader = new FileReader();
+        reader.onload = () => {
+          previewImage.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
 
-    <style>
-      body {
-        font-family: 'Orbitron', sans-serif;
+    submitBtn.addEventListener("click", async () => {
+      if (!uploadedImage) {
+        alert("Please upload an image first.");
+        return;
       }
 
-      .bg-animated {
-        background: linear-gradient(-45deg, #0f0f0f, #1f1f1f, #111827);
-        background-size: 600% 600%;
-        animation: gradientBG 8s ease infinite;
+      loader.classList.remove("hidden");
+      resultImage.src = "";
+
+      const formData = new FormData();
+      formData.append("image", uploadedImage);
+
+      try {
+        const response = await fetch("https://tree1.sahajsharma921.workers.dev", {
+          method: "POST",
+          body: formData,
+        });
+        const blob = await response.blob();
+        resultImage.src = URL.createObjectURL(blob);
+      } catch (err) {
+        alert("Upscale failed. Try again later.");
+        console.error(err);
+      } finally {
+        loader.classList.add("hidden");
       }
-
-      @keyframes gradientBG {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
-      }
-
-      .loader {
-        border: 4px solid #2d2d2d;
-        border-top: 4px solid #38bdf8;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        animation: spin 1s linear infinite;
-        margin: auto;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-  </head>
-
-  <body class="bg-animated text-white min-h-screen flex flex-col items-center justify-center px-4">
-
-    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-center tracking-wide">DragonScale</h1>
-    <p class="text-lg sm:text-xl mb-6 text-center text-gray-300">Burn the blur. Upscale your images in HD with power.</p>
-
-    <!-- Upload Field -->
-    <input
-      id="imageUpload"
-      type="file"
-      accept="image/*"
-      class="bg-gray-800 border-2 border-gray-600 rounded-xl p-2 mb-4 w-full max-w-sm file:cursor-pointer"
-    />
-
-    <!-- Preview & Result -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-4xl mb-6">
-      <div class="flex flex-col items-center">
-        <span class="mb-2 text-sm text-gray-400">Preview</span>
-        <img id="previewImage" class="w-64 h-auto rounded-xl shadow-md" />
-      </div>
-
-      <div class="flex flex-col items-center">
-        <span class="mb-2 text-sm text-gray-400">Upscaled</span>
-        <img id="resultImage" class="w-64 h-auto rounded-xl shadow-md" />
-      </div>
-    </div>
-
-    <!-- Loader -->
-    <div id="loading" class="loader mb-6 hidden"></div>
-
-    <!-- Submit Button -->
-    <button
-      id="submitBtn"
-      class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md"
-    >
-      Upscale Image
-    </button>
-
-    <!-- JS -->
-    <script src="script.js"></script>
-  </body>
+    });
+  </script></body>
 </html>
