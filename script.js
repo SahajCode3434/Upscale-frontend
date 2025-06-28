@@ -1,33 +1,33 @@
-const imageUpload = document.getElementById("imageUpload");
-const previewImage = document.getElementById("previewImage");
-const resultImage = document.getElementById("resultImage");
-const submitBtn = document.getElementById("submitBtn");
+const imageInput = document.getElementById('imageUpload');
+const beforePreview = document.getElementById('previewImage');
+const afterPreview = document.getElementById('resultImage');
+const upscaleBtn = document.getElementById('submitBtn');
 
-let uploadedImage = null;
+let uploadedFile = null;
 
-imageUpload.addEventListener("change", () => {
-  const file = imageUpload.files[0];
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
   if (file) {
-    uploadedImage = file;
+    uploadedFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      previewImage.src = reader.result;
+      beforePreview.src = reader.result;
     };
     reader.readAsDataURL(file);
   }
 });
 
-submitBtn.addEventListener("click", async () => {
-  if (!uploadedImage) {
-    alert("Please upload an image first.");
+upscaleBtn.addEventListener("click", async () => {
+  if (!uploadedFile) {
+    alert("Please upload an image.");
     return;
   }
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Upscaling...";
+  upscaleBtn.disabled = true;
+  upscaleBtn.textContent = "Upscaling...";
 
   const formData = new FormData();
-  formData.append("image", uploadedImage);
+  formData.append("image", uploadedFile);
 
   try {
     const response = await fetch("https://tree1.sahajsharma921.workers.dev", {
@@ -35,17 +35,15 @@ submitBtn.addEventListener("click", async () => {
       body: formData
     });
 
-    if (!response.ok) {
-      throw new Error("Worker responded with status " + response.status);
-    }
+    if (!response.ok) throw new Error("Upscale failed");
 
     const blob = await response.blob();
-    resultImage.src = URL.createObjectURL(blob);
-  } catch (error) {
-    alert("Upscaling failed: " + error.message);
-    console.error(error);
+    afterPreview.src = URL.createObjectURL(blob);
+  } catch (err) {
+    alert("Error during upscaling.");
+    console.error(err);
+  } finally {
+    upscaleBtn.disabled = false;
+    upscaleBtn.textContent = "Upscale Image";
   }
-
-  submitBtn.disabled = false;
-  submitBtn.textContent = "Upscale Image";
 });
