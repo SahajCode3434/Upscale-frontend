@@ -26,6 +26,15 @@
   <h1 class="text-4xl text-orange-500 mb-2">DragonScale</h1>
   <h2 class="text-lg text-gray-400 mb-6">Burn the Noise. Upscale with Precision.</h2>
 
+  <!-- Google Sign-In -->
+  <div class="w-full max-w-md text-center mb-6">
+    <button id="signInBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Sign in with Google
+    </button>
+    <p id="userInfo" class="mt-2 text-sm text-green-400"></p>
+  </div>
+
+  <!-- Upload Box -->
   <div class="w-full max-w-md bg-gray-900 rounded-lg p-4 border border-gray-700">
     <input id="imageUpload" type="file" accept="image/*" class="w-full text-white mb-4" />
     <button id="submitBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300">
@@ -54,12 +63,13 @@
 
   <footer class="text-sm text-gray-500 mt-10">All rights reserved © DragonScale 2025</footer>
 
-  <!-- Your JavaScript -->
+  <!-- Script.js -->
   <script src="script.js"></script>
 
-  <!-- 🔥 Firebase CDN Integration -->
+  <!-- Firebase Auth Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
 
     const firebaseConfig = {
@@ -73,7 +83,31 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    getAnalytics(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const signInBtn = document.getElementById("signInBtn");
+    const userInfo = document.getElementById("userInfo");
+
+    signInBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        userInfo.innerText = `Signed in as: ${user.displayName || user.email}`;
+        signInBtn.classList.add("hidden");
+      } catch (error) {
+        alert("Sign-in failed");
+        console.error(error);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userInfo.innerText = `Signed in as: ${user.displayName || user.email}`;
+        signInBtn.classList.add("hidden");
+      }
+    });
   </script>
 </body>
 </html>
