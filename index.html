@@ -54,6 +54,26 @@
 
   <footer class="text-sm text-gray-500 mt-10">All rights reserved © DragonScale 2025</footer>
 
+  <!-- Your JavaScript -->
   <script src="script.js"></script>
+
+  <!-- 🔥 Firebase CDN Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbJtqRDkbgOslfe_dLmjcZpstuD_Zr_cU",
+      authDomain: "dragonscaleauth.firebaseapp.com",
+      projectId: "dragonscaleauth",
+      storageBucket: "dragonscaleauth.firebasestorage.app",
+      messagingSenderId: "86348960271",
+      appId: "1:86348960271:web:65d6c80f79ba4a5762897a",
+      measurementId: "G-V3HLNLJ0KB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </body>
 </html>
